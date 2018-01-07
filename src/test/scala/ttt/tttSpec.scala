@@ -41,6 +41,29 @@ class tttSpec extends FlatSpec {
     val finalBoard = game.placePiece(Y,4,nextBoard)
     assert(0x310 == finalBoard)
   }
-  
+
+  "openSpot" should "return true when spot is open" in {
+    val Y = 3
+    val nextBoard = game.placePiece(Y,4,game.newBoard())
+
+    assert(game.openSpot(3,nextBoard))
+  }
+
+  it should "return false when spot is occupied in X" in {
+    val X = 1
+    val nextBoard = game.placePiece(X,5,game.newBoard())
+
+    assert(!(game.openSpot(5,nextBoard)))
+
+  }
+
+  it should "return false when spot is occupied with Y" in {
+    val Y = 3
+    val nextBoard = game.placePiece(Y,7,game.newBoard())
+
+    assert(!(game.openSpot(7,nextBoard)))
+
+  }
+
 
 }
