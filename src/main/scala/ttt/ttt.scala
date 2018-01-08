@@ -1,5 +1,6 @@
 package ttt
 
+import scala.collection.mutable.ArrayBuffer
 
 object game extends gameFunctions with App {
 
@@ -14,6 +15,9 @@ object game extends gameFunctions with App {
 
   // An empty square is represented by a 00, an X by a 01 (a shifted 1),
   // and a Y by a 11 (a shifted 3).
+
+  // Calling the Game() function with either 1 for X to start or 3 for O to start will
+  // return the winner and final board of a random game.
 
 
 }
@@ -36,10 +40,15 @@ trait gameFunctions {
   }
 
 
-  def openSpot(spot: Int, board: Int): Boolean = {
+  def pickSpot(spots: ArrayBuffer[Int]): (Int,ArrayBuffer[Int]) = {
 
-    val mask = 3 << (2 * spot)
-    if ((mask & board) == 0) true else false
+    val r = new scala.util.Random
+    val index = r.nextInt(spots.length - 1)
+
+    val spot = spots.remove(index)
+
+    (spot,spots)
+
 
   }
 
@@ -65,6 +74,40 @@ trait gameFunctions {
     else if ((board & 0x3330) == 0x1110) (true, Some("X"))
 
     else (false,None)
+
+  }
+
+  def turn(player: Int, spots: ArrayBuffer[Int], board: Int): (Int,Int) = {
+
+    if (spots.isEmpty) (-1,board) //cats game
+
+    else {
+
+      val (spot,newSpots) = pickSpot(spots)
+      val nextBoard = placePiece(player,spot,board)
+
+      //Board states can be accessed and stored if needed for the neural net
+      //println("Player: " + player)
+      //println("Spot: " + spot)
+      //println("Board: " + nextBoard)
+
+      val (win,_) = getWinner(nextBoard)
+
+      if (win) return (player,nextBoard)
+      else {
+        if (player == 1) turn(3,newSpots,nextBoard) else turn(1, newSpots, nextBoard)
+      }
+
+    }
+
+  }
+
+  //returns either "X", "O", "CAT"
+  def game(startPlayer: Int): (Int,Int) = {
+
+    val board = newBoard()
+    val spots = ArrayBuffer(0,1,2,3,4,5,6,7,8)
+    turn(startPlayer,spots,board)
 
   }
 

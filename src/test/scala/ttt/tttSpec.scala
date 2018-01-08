@@ -1,5 +1,6 @@
 package ttt
 
+import scala.collection.mutable.ArrayBuffer
 import org.scalatest._
 
 class tttSpec extends FlatSpec {
@@ -49,31 +50,21 @@ class tttSpec extends FlatSpec {
     assert(0x310 == finalBoard)
   }
 
-  //TEST openSpot
+  //TEST pickSpot
   //----------------------------------
 
-  "openSpot" should "return true when spot is open" in {
-    val O = 3
-    val nextBoard = game.placePiece(O,4,game.newBoard())
+  "pickSpot" should "return 4 spots after 5 spots have been picked" in {
+    val spots = ArrayBuffer(0,1,2,3,4,5,6,7,8)
 
-    assert(game.openSpot(3,nextBoard))
+    val (_,spots2) = game.pickSpot(spots)
+    val (_,spots3) = game.pickSpot(spots)
+    val (_,spots4) = game.pickSpot(spots)
+    val (_,spots5) = game.pickSpot(spots)
+    val (_,spots6) = game.pickSpot(spots)
+
+    assert(spots6.length == 4)
   }
 
-  it should "return false when spot is occupied in X" in {
-    val X = 1
-    val nextBoard = game.placePiece(X,5,game.newBoard())
-
-    assert(!(game.openSpot(5,nextBoard)))
-
-  }
-
-  it should "return false when spot is occupied with O" in {
-    val O = 3
-    val nextBoard = game.placePiece(O,7,game.newBoard())
-
-    assert(!(game.openSpot(7,nextBoard)))
-
-  }
 
   //TEST getWinner
   //----------------------------------
@@ -118,6 +109,7 @@ class tttSpec extends FlatSpec {
     val result = game.getWinner(board)
     assert(result._1 && result._2 == Some("X"))
   }
+
   it should "return (true,X) when there is a middle horiz X win example" in {
     val board = 0x3543 //000011010101000011
     val result = game.getWinner(board)
