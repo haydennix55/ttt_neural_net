@@ -2,6 +2,7 @@ package ttt
 
 import scala.collection.mutable.ArrayBuffer
 
+
 object game extends gameFunctions with App {
 
   //BITBOARD TIC-TAC-TOE
@@ -18,6 +19,8 @@ object game extends gameFunctions with App {
 
   // Calling the Game() function with either 1 for X to start or 3 for O to start will
   // return the winner and final board of a random game.
+
+  println(game(1))
 
 
 }
@@ -40,15 +43,19 @@ trait gameFunctions {
   }
 
 
-  def pickSpot(spots: ArrayBuffer[Int]): (Int,ArrayBuffer[Int]) = {
+  def pickSpot(openSpots: ArrayBuffer[Int]): (Int,ArrayBuffer[Int]) = {
 
     val r = new scala.util.Random
-    val index = r.nextInt(spots.length - 1)
 
-    val spot = spots.remove(index)
+    if (openSpots.length > 1) {
+      val spot = openSpots.remove(r.nextInt(openSpots.length - 1))
+      (spot,openSpots)
 
-    (spot,spots)
+    } else {
+      openSpots.remove(0)
+      (0,openSpots)
 
+    }
 
   }
 
