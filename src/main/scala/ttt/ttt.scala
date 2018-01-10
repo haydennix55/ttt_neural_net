@@ -3,7 +3,7 @@ package ttt
 import scala.collection.mutable.ArrayBuffer
 
 
-object game extends gameFunctions with App {
+object game extends App with netFunctions {
 
   //BITBOARD TIC-TAC-TOE
   //---------------------------
@@ -20,6 +20,32 @@ object game extends gameFunctions with App {
   // Calling the Game() function with either 1 for X to start or 3 for O to start will
   // return the winner and final board of a random game.
 
+
+}
+
+
+trait netFunctions extends gameFunctions {
+
+  def bestSpot(board: Int, player: Int, openSpots: ArrayBuffer[Int]): Int = {
+    //minimax(board,player,openSpots).index
+    ???
+  }
+
+  def minimax(newBoard: Int, aiPlayer: Int, openSpots: ArrayBuffer[Int]) = {
+    if (getCats(openSpots)) 0
+
+    val state = getWinner(newBoard)
+    if (state._1 && state._2 == Some(aiPlayer)) 10
+    else if (state._1 && state._2 != Some(aiPlayer)) -10
+
+    else {
+
+      ???
+
+
+    }
+
+  }
 
 }
 
@@ -57,35 +83,35 @@ trait gameFunctions {
   }
 
 
-  def getWinner(board: Int): (Boolean,Option[String]) = {
+  def getWinner(board: Int): (Boolean,Option[Int]) = {
 
-    if ((board & 0x3F) == 0x3F) (true, Some("O"))
-    else if ((board & 0xFC0) == 0xFC0) (true, Some("O"))
-    else if ((board & 0x3F000) == 0x3F000) (true, Some("O"))
-    else if ((board & 0x30C3) == 0x30C3) (true, Some("O"))
-    else if ((board & 0xC30C) == 0xC30C) (true, Some("O"))
-    else if ((board & 0x30C30) == 0x30C30) (true, Some("O"))
-    else if ((board & 0x30303) == 0x30303) (true, Some("O"))
-    else if ((board & 0x3330) == 0x3330) (true, Some("O"))
+    if ((board & 0x3F) == 0x3F) (true, Some(3))
+    else if ((board & 0xFC0) == 0xFC0) (true, Some(3))
+    else if ((board & 0x3F000) == 0x3F000) (true, Some(3))
+    else if ((board & 0x30C3) == 0x30C3) (true, Some(3))
+    else if ((board & 0xC30C) == 0xC30C) (true, Some(3))
+    else if ((board & 0x30C30) == 0x30C30) (true, Some(3))
+    else if ((board & 0x30303) == 0x30303) (true, Some(3))
+    else if ((board & 0x3330) == 0x3330) (true, Some(3))
 
-    else if ((board & 0x3F) == 0x15) (true, Some("X"))
-    else if ((board & 0xFC0) == 0x540) (true, Some("X"))
-    else if ((board & 0x3F000) == 0x15000) (true, Some("X"))
-    else if ((board & 0x30C3) == 0x1041) (true, Some("X"))
-    else if ((board & 0xC30C) == 0x4104) (true, Some("X"))
-    else if ((board & 0x30C30) == 0x10410) (true, Some("X"))
-    else if ((board & 0x30303) == 0x10101) (true, Some("X"))
-    else if ((board & 0x3330) == 0x1110) (true, Some("X"))
+    else if ((board & 0x3F) == 0x15) (true, Some(1))
+    else if ((board & 0xFC0) == 0x540) (true, Some(1))
+    else if ((board & 0x3F000) == 0x15000) (true, Some(1))
+    else if ((board & 0x30C3) == 0x1041) (true, Some(1))
+    else if ((board & 0xC30C) == 0x4104) (true, Some(1))
+    else if ((board & 0x30C30) == 0x10410) (true, Some(1))
+    else if ((board & 0x30303) == 0x10101) (true, Some(1))
+    else if ((board & 0x3330) == 0x1110) (true, Some(1))
 
     else (false,None)
 
   }
 
+  def getCats(spots: ArrayBuffer[Int]): Boolean = {
+    if (spots.isEmpty) true else false
+  }
+
   def turn(player: Int, spots: ArrayBuffer[Int], board: Int): (Int,Int) = {
-
-    if (spots.isEmpty) (-1,board) //cats game
-
-    else {
 
       val (spot,newSpots) = pickSpot(spots)
       val nextBoard = placePiece(player,spot,board)
@@ -98,15 +124,14 @@ trait gameFunctions {
       val (win,_) = getWinner(nextBoard)
 
       if (win) return (player,nextBoard)
+      else if (getCats(newSpots)) (-1,nextBoard)
       else {
         if (player == 1) turn(3,newSpots,nextBoard) else turn(1, newSpots, nextBoard)
       }
 
-    }
-
   }
 
-  //returns either "X", "O", "CAT"
+  //returns either 1, 3, "CAT"
   def game(startPlayer: Int): (Int,Int) = {
 
     val board = newBoard()
