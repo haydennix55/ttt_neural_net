@@ -20,14 +20,11 @@ object game extends gameFunctions with App {
   // Calling the Game() function with either 1 for X to start or 3 for O to start will
   // return the winner and final board of a random game.
 
-  println(game(1))
-
 
 }
 
 
 trait gameFunctions {
-
 
 
   def newBoard(): Int = {
@@ -52,8 +49,8 @@ trait gameFunctions {
       (spot,openSpots)
 
     } else {
-      openSpots.remove(0)
-      (0,openSpots)
+      val spot = openSpots.remove(0)
+      (spot,openSpots)
 
     }
 
@@ -94,9 +91,9 @@ trait gameFunctions {
       val nextBoard = placePiece(player,spot,board)
 
       //Board states can be accessed and stored if needed for the neural net
-      //println("Player: " + player)
-      //println("Spot: " + spot)
-      //println("Board: " + nextBoard)
+//      println("Player: " + player)
+//      println("Spot: " + spot)
+//      println("Board: " + nextBoard)
 
       val (win,_) = getWinner(nextBoard)
 
